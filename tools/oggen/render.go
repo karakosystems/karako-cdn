@@ -86,10 +86,12 @@ func Render(root string, p Project, now time.Time) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("logoFull: %w", err)
 	}
+	logo = trimTransparent(logo)
 	icon, err := loadPNG(filepath.Join(root, p.LogoIcon))
 	if err != nil {
 		return "", fmt.Errorf("logoIcon: %w", err)
 	}
+	icon = trimTransparent(icon)
 	fs, err := loadFaces()
 	if err != nil {
 		return "", err
@@ -173,6 +175,37 @@ func loadPNG(path string) (image.Image, error) {
 	}
 	defer f.Close()
 	return png.Decode(f)
+}
+
+func trimTransparent(src image.Image) image.Image {
+	const alphaMin = 0x1000
+	b := src.Bounds()
+	minX, minY := b.Max.X, b.Max.Y
+	maxX, maxY := b.Min.X-1, b.Min.Y-1
+	for y := b.Min.Y; y < b.Max.Y; y++ {
+		for x := b.Min.X; x < b.Max.X; x++ {
+			if _, _, _, a := src.At(x, y).RGBA(); a >= alphaMin {
+				if x < minX {
+					minX = x
+				}
+				if x > maxX {
+					maxX = x
+				}
+				if y < minY {
+					minY = y
+				}
+				if y > maxY {
+					maxY = y
+				}
+			}
+		}
+	}
+	if maxX < minX {
+		return src
+	}
+	out := image.NewNRGBA(image.Rect(0, 0, maxX-minX+1, maxY-minY+1))
+	draw.Draw(out, out.Bounds(), src, image.Point{X: minX, Y: minY}, draw.Src)
+	return out
 }
 
 func scaleToHeight(src image.Image, h int) *image.NRGBA {

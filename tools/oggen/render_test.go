@@ -121,3 +121,29 @@ func TestRenderMissingLogoFails(t *testing.T) {
 		t.Fatal("no file must be written on failure")
 	}
 }
+
+func TestTrimTransparentCropsPadding(t *testing.T) {
+	img := image.NewNRGBA(image.Rect(0, 0, 100, 60))
+	for y := 10; y < 50; y++ {
+		for x := 20; x < 80; x++ {
+			img.SetNRGBA(x, y, color.NRGBA{R: 255, G: 255, B: 255, A: 255})
+		}
+	}
+	got := trimTransparent(img)
+	if got.Bounds().Dx() != 60 || got.Bounds().Dy() != 40 {
+		t.Fatalf("trimmed bounds = %v, want 60x40", got.Bounds())
+	}
+}
+
+func TestTrimTransparentKeepsOpaqueImage(t *testing.T) {
+	img := image.NewNRGBA(image.Rect(0, 0, 30, 20))
+	for y := 0; y < 20; y++ {
+		for x := 0; x < 30; x++ {
+			img.SetNRGBA(x, y, color.NRGBA{R: 10, G: 20, B: 30, A: 255})
+		}
+	}
+	got := trimTransparent(img)
+	if got.Bounds().Dx() != 30 || got.Bounds().Dy() != 20 {
+		t.Fatalf("trimmed bounds = %v, want 30x20 (unchanged)", got.Bounds())
+	}
+}
