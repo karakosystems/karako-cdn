@@ -13,8 +13,9 @@
     },
     {
       "name": "antwan",
-      "tagline": "Koneksyon w ak Leta",
-      "description": "A Karako Systems product.",
+      "type": "Asistan Administratif Ayisyen",
+      "tagline": "Tout enfòmasyon piblik ofisyèl,\naksesib pou tout Ayisyen.",
+      "description": "Antwan gide w nan pwosedi administratif ayisyen yo - paspò, taks, pèmi - nan lang senp, san jargon. Yon pwodwi Karako Systems.",
       "url": "https://antwan.ai",
       "background": "#1D2E79",
       "accent": ["#F6B93B", "#E23744", "#7A2E8E"],
