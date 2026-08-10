@@ -190,10 +190,10 @@ func renderOne(root string, p Project, v variant, bg color.NRGBA, logo, icon ima
 	}
 
 	out := filepath.Join(root, "assets", p.Name, v.file)
-	if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(out), 0o750); err != nil {
 		return "", err
 	}
-	f, err := os.Create(out)
+	f, err := os.Create(out) // #nosec G304 -- output path built from the project name in og.config.json
 	if err != nil {
 		return "", err
 	}
@@ -205,7 +205,7 @@ func renderOne(root string, p Project, v variant, bg color.NRGBA, logo, icon ima
 }
 
 func loadPNG(path string) (image.Image, error) {
-	f, err := os.Open(path)
+	f, err := os.Open(path) // #nosec G304 -- logo paths come from og.config.json in this repo
 	if err != nil {
 		return nil, err
 	}
