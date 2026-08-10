@@ -23,17 +23,17 @@
         "ht": {
           "type": "Asistan Administratif Ayisyen",
           "tagline": "Tout enfòmasyon piblik ofisyèl,\naksesib pou tout Ayisyen.",
-          "description": "Antwan rasanble tout enfòmasyon piblik ofisyèl yo - lwa, dekrè, demach, sèvis Leta - epi li reponn nenpòt kesyon ou sou yo."
+          "description": "Antwan rasanble tout enfòmasyon piblik ofisyèl yo lwa, dekrè, demach, sèvis Leta epi li reponn nenpòt kesyon ou sou yo."
         },
         "fr": {
           "type": "Assistant Administratif Haïtien",
           "tagline": "L'information publique officielle,\naccessible à tous les Haïtiens.",
-          "description": "Antwan rassemble toute l'information publique officielle - lois, décrets, démarches, services de l'État - et répond à toutes vos questions."
+          "description": "Antwan rassemble toute l'information publique officielle lois, décrets, démarches, services de l'État et répond à toutes vos questions."
         },
         "en": {
           "type": "Haitian Administrative Assistant",
           "tagline": "Official public information,\naccessible to every Haitian.",
-          "description": "Antwan gathers all official public information - laws, decrees, procedures, government services - and answers any question about them."
+          "description": "Antwan gathers all official public information laws, decrees, procedures, government services and answers any question about them."
         }
       }
     }
