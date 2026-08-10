@@ -6,8 +6,8 @@ and redirects. Scratch Docker image (~10 MB), AMD64/ARM64, zero
 dependencies.
 
 **URL rule: the path under `assets/` is the URL.**
-`assets/images/karako/logos/logo-icon-black.png` →
-`/images/karako/logos/logo-icon-black.png`.
+`assets/karako/logos/logo-icon-black.png` →
+`/karako/logos/logo-icon-black.png`.
 
 To publish a file, drop it under `assets/` (lowercase kebab-case) and
 rebuild — content is embedded at compile time. Dotfiles are never

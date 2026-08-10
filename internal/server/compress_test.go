@@ -13,8 +13,8 @@ func newGzipTestServer(t *testing.T) (*Server, string) {
 	t.Helper()
 	payload := strings.Repeat(`{"key":"value","key":"value"},`, 100)
 	assets := fstest.MapFS{
-		"assets/json/big.json":  {Data: []byte(payload)},
-		"assets/images/pix.png": {Data: []byte(strings.Repeat("png", 200))},
+		"assets/json/big.json": {Data: []byte(payload)},
+		"assets/pix.png":       {Data: []byte(strings.Repeat("png", 200))},
 	}
 	srv, err := New(Config{BaseFQDN: "karakosystems.com"}, assets)
 	if err != nil {
@@ -87,7 +87,7 @@ func TestGzipVariantHasOwnETagAnd304(t *testing.T) {
 
 func TestAlreadyCompressedTypesGetNoVariant(t *testing.T) {
 	srv, _ := newGzipTestServer(t)
-	rec := do(t, srv, http.MethodGet, "/images/pix.png", http.Header{"Accept-Encoding": {"gzip"}})
+	rec := do(t, srv, http.MethodGet, "/pix.png", http.Header{"Accept-Encoding": {"gzip"}})
 	if enc := rec.Header().Get("Content-Encoding"); enc != "" {
 		t.Errorf("png Content-Encoding = %q, want empty (no gzip variant)", enc)
 	}

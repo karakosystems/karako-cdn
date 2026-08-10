@@ -151,7 +151,7 @@ func Render(root string, p Project, now time.Time) (string, error) {
 		y += blockGap
 	}
 
-	out := filepath.Join(root, "assets", "images", p.Name, "og-image.png")
+	out := filepath.Join(root, "assets", p.Name, "og-image.png")
 	if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
 		return "", err
 	}

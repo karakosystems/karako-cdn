@@ -8,8 +8,8 @@
       "url": "https://karakosystems.com",
       "background": "#2D2B55",
       "accent": ["#6C5CE7", "#8577ED", "#6C5CE7"],
-      "logoFull": "assets/images/karako/logos/logo-full-white.png",
-      "logoIcon": "assets/images/karako/logos/logo-icon-white.png"
+      "logoFull": "assets/karako/logos/logo-full-white.png",
+      "logoIcon": "assets/karako/logos/logo-icon-white.png"
     },
     {
       "name": "antwan",
@@ -18,8 +18,8 @@
       "url": "https://antwan.ai",
       "background": "#1D2E79",
       "accent": ["#F6B93B", "#E23744", "#7A2E8E"],
-      "logoFull": "assets/images/antwan/logos/logo-full-white.png",
-      "logoIcon": "assets/images/antwan/logos/logo-icon-white.png"
+      "logoFull": "assets/antwan/logos/logo-full-white.png",
+      "logoIcon": "assets/antwan/logos/logo-icon-white.png"
     }
   ]
 }

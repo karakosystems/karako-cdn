@@ -10,9 +10,9 @@ import (
 func newTestServer(t *testing.T) *Server {
 	t.Helper()
 	assets := fstest.MapFS{
-		"assets/json/config/app.json":         {Data: []byte(`{"ok":true}`)},
-		"assets/json/.gitkeep":                {Data: nil},
-		"assets/images/karako/logos/logo.png": {Data: []byte("png-bytes")},
+		"assets/json/config/app.json":  {Data: []byte(`{"ok":true}`)},
+		"assets/json/.gitkeep":         {Data: nil},
+		"assets/karako/logos/logo.png": {Data: []byte("png-bytes")},
 	}
 	srv, err := New(Config{BaseFQDN: "karakosystems.com", Addr: ":80"}, assets)
 	if err != nil {
@@ -37,7 +37,7 @@ func do(t *testing.T, srv *Server, method, target string, header http.Header) *h
 func TestServesEmbeddedFiles(t *testing.T) {
 	srv := newTestServer(t)
 
-	rec := do(t, srv, http.MethodGet, "/images/karako/logos/logo.png", nil)
+	rec := do(t, srv, http.MethodGet, "/karako/logos/logo.png", nil)
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, want 200", rec.Code)
 	}
@@ -68,8 +68,8 @@ func TestServesEmbeddedFiles(t *testing.T) {
 
 func TestETagReturns304(t *testing.T) {
 	srv := newTestServer(t)
-	etag := do(t, srv, http.MethodGet, "/images/karako/logos/logo.png", nil).Header().Get("ETag")
-	rec := do(t, srv, http.MethodGet, "/images/karako/logos/logo.png", http.Header{"If-None-Match": {etag}})
+	etag := do(t, srv, http.MethodGet, "/karako/logos/logo.png", nil).Header().Get("ETag")
+	rec := do(t, srv, http.MethodGet, "/karako/logos/logo.png", http.Header{"If-None-Match": {etag}})
 	if rec.Code != http.StatusNotModified {
 		t.Fatalf("status = %d, want 304", rec.Code)
 	}
@@ -93,7 +93,7 @@ func TestRedirectsBarePaths(t *testing.T) {
 
 func TestUnknownAssetPathsReturn404(t *testing.T) {
 	srv := newTestServer(t)
-	for _, target := range []string{"/unknown.json", "/karako/logos/logo.png"} {
+	for _, target := range []string{"/unknown.json", "/karako/logos/missing.png"} {
 		rec := do(t, srv, http.MethodGet, target, nil)
 		if rec.Code != http.StatusNotFound {
 			t.Errorf("%s: status = %d, want 404", target, rec.Code)
@@ -114,7 +114,7 @@ func TestHealth(t *testing.T) {
 
 func TestCORSPreflight(t *testing.T) {
 	srv := newTestServer(t)
-	rec := do(t, srv, http.MethodOptions, "/images/karako/logos/logo.png", nil)
+	rec := do(t, srv, http.MethodOptions, "/karako/logos/logo.png", nil)
 	if rec.Code != http.StatusNoContent {
 		t.Fatalf("OPTIONS: status = %d, want 204", rec.Code)
 	}

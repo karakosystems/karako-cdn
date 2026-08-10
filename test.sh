@@ -7,7 +7,7 @@
 PORT=${1:-8080}
 HOST=${2:-localhost}
 BASE_URL="http://$HOST:$PORT"
-ASSET="/images/karako/logos/logo-icon-black.png"
+ASSET="/karako/logos/logo-icon-black.png"
 
 echo "🧪 Test du CDN Karako"
 echo "📍 Cible: $BASE_URL"

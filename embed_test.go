@@ -19,12 +19,12 @@ func TestRealEmbeddedLogosAreServed(t *testing.T) {
 	}
 
 	for _, target := range []string{
-		"/images/karako/logos/logo-icon-black.png",
-		"/images/karako/logos/logo-full-navy.png",
-		"/images/antwan/logos/logo-full-color.png",
-		"/images/antwan/logos/logo-icon-color.png",
-		"/images/karako/og-image.png",
-		"/images/antwan/og-image.png",
+		"/karako/logos/logo-icon-black.png",
+		"/karako/logos/logo-full-navy.png",
+		"/antwan/logos/logo-full-color.png",
+		"/antwan/logos/logo-icon-color.png",
+		"/karako/og-image.png",
+		"/antwan/og-image.png",
 	} {
 		rec := httptest.NewRecorder()
 		srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, target, nil))

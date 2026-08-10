@@ -10,8 +10,8 @@ import (
 func TestMetricsCountsResponseClasses(t *testing.T) {
 	srv := newTestServer(t)
 
-	etag := do(t, srv, http.MethodGet, "/images/karako/logos/logo.png", nil).Header().Get("ETag")
-	do(t, srv, http.MethodGet, "/images/karako/logos/logo.png", http.Header{"If-None-Match": {etag}})
+	etag := do(t, srv, http.MethodGet, "/karako/logos/logo.png", nil).Header().Get("ETag")
+	do(t, srv, http.MethodGet, "/karako/logos/logo.png", http.Header{"If-None-Match": {etag}})
 	do(t, srv, http.MethodGet, "/", nil)
 	do(t, srv, http.MethodGet, "/missing.png", nil)
 

@@ -77,7 +77,7 @@ func TestRenderEndToEnd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Render: %v", err)
 	}
-	want := filepath.Join(root, "assets", "images", "testproj", "og-image.png")
+	want := filepath.Join(root, "assets", "testproj", "og-image.png")
 	if out != want {
 		t.Errorf("out = %s, want %s", out, want)
 	}
@@ -117,7 +117,7 @@ func TestRenderMissingLogoFails(t *testing.T) {
 	if _, err := Render(root, p, time.Now()); err == nil {
 		t.Fatal("want error for missing logo")
 	}
-	if _, err := os.Stat(filepath.Join(root, "assets", "images", "x", "og-image.png")); err == nil {
+	if _, err := os.Stat(filepath.Join(root, "assets", "x", "og-image.png")); err == nil {
 		t.Fatal("no file must be written on failure")
 	}
 }

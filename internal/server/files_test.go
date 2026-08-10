@@ -9,9 +9,9 @@ import (
 
 func TestLoadFilesMapsPathsAndETags(t *testing.T) {
 	fsys := fstest.MapFS{
-		"assets/images/karako/logos/logo.png": {Data: []byte("png-bytes")},
-		"assets/images/karako/notes.txt":      {Data: []byte("any file is served")},
-		"assets/json/.gitkeep":                {Data: nil},
+		"assets/karako/logos/logo.png": {Data: []byte("png-bytes")},
+		"assets/karako/notes.txt":      {Data: []byte("any file is served")},
+		"assets/json/.gitkeep":         {Data: nil},
 	}
 	files := map[string]*fileData{}
 	etags := map[string]string{}
@@ -20,18 +20,18 @@ func TestLoadFilesMapsPathsAndETags(t *testing.T) {
 		t.Fatalf("loadFiles: %v", err)
 	}
 
-	fd, ok := files["/images/karako/logos/logo.png"]
+	fd, ok := files["/karako/logos/logo.png"]
 	if !ok {
-		t.Fatalf("missing /images/karako/logos/logo.png, got: %v", files)
+		t.Fatalf("missing /karako/logos/logo.png, got: %v", files)
 	}
 	if string(fd.content) != "png-bytes" {
 		t.Errorf("unexpected content: %q", fd.content)
 	}
 	wantETag := fmt.Sprintf("\"%x\"", md5.Sum([]byte("png-bytes")))
-	if etags["/images/karako/logos/logo.png"] != wantETag {
-		t.Errorf("etag = %q, want %q", etags["/images/karako/logos/logo.png"], wantETag)
+	if etags["/karako/logos/logo.png"] != wantETag {
+		t.Errorf("etag = %q, want %q", etags["/karako/logos/logo.png"], wantETag)
 	}
-	if _, ok := files["/images/karako/notes.txt"]; !ok {
+	if _, ok := files["/karako/notes.txt"]; !ok {
 		t.Error("non-image files under assets/ must be served too")
 	}
 	if _, ok := files["/json/.gitkeep"]; ok {
