@@ -13,14 +13,29 @@
     },
     {
       "name": "antwan",
-      "type": "Asistan Administratif Ayisyen",
-      "tagline": "Tout enfòmasyon piblik ofisyèl,\naksesib pou tout Ayisyen.",
-      "description": "Paspò, CIN, NIF, taks oswa pèmi - Antwan esplike w chak demach klè e senp, baze sou sous ofisyèl Leta a.",
       "url": "https://antwan.ai",
       "background": "#1D2E79",
       "accent": ["#F6B93B", "#E23744", "#7A2E8E"],
       "logoFull": "assets/antwan/logos/logo-full-white.png",
-      "logoIcon": "assets/antwan/logos/logo-icon-white.png"
+      "logoIcon": "assets/antwan/logos/logo-icon-white.png",
+      "defaultLocale": "ht",
+      "locales": {
+        "ht": {
+          "type": "Asistan Administratif Ayisyen",
+          "tagline": "Tout enfòmasyon piblik ofisyèl,\naksesib pou tout Ayisyen.",
+          "description": "Antwan rasanble tout enfòmasyon piblik ofisyèl yo - lwa, dekrè, demach, sèvis Leta - epi li reponn nenpòt kesyon ou sou yo."
+        },
+        "fr": {
+          "type": "Assistant Administratif Haïtien",
+          "tagline": "L'information publique officielle,\naccessible à tous les Haïtiens.",
+          "description": "Antwan rassemble toute l'information publique officielle - lois, décrets, démarches, services de l'État - et répond à toutes vos questions."
+        },
+        "en": {
+          "type": "Haitian Administrative Assistant",
+          "tagline": "Official public information,\naccessible to every Haitian.",
+          "description": "Antwan gathers all official public information - laws, decrees, procedures, government services - and answers any question about them."
+        }
+      }
     }
   ]
 }

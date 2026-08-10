@@ -73,16 +73,16 @@ func TestRenderEndToEnd(t *testing.T) {
 		LogoIcon:    "assets/logos/icon.png",
 	}
 
-	out, err := Render(root, p, time.Date(2026, 8, 4, 0, 0, 0, 0, time.UTC))
+	outs, err := Render(root, p, time.Date(2026, 8, 4, 0, 0, 0, 0, time.UTC))
 	if err != nil {
 		t.Fatalf("Render: %v", err)
 	}
 	want := filepath.Join(root, "assets", "testproj", "og-image.png")
-	if out != want {
-		t.Errorf("out = %s, want %s", out, want)
+	if len(outs) != 1 || outs[0] != want {
+		t.Errorf("outs = %v, want [%s]", outs, want)
 	}
 
-	f, err := os.Open(out)
+	f, err := os.Open(outs[0])
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -119,6 +119,53 @@ func TestRenderMissingLogoFails(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(root, "assets", "x", "og-image.png")); err == nil {
 		t.Fatal("no file must be written on failure")
+	}
+}
+
+func TestRenderLocalesProduceOneImagePerLanguage(t *testing.T) {
+	root := t.TempDir()
+	writeTestPNG(t, filepath.Join(root, "assets", "logos", "full.png"), 300, 100)
+	writeTestPNG(t, filepath.Join(root, "assets", "logos", "icon.png"), 100, 100)
+
+	p := Project{
+		Name:       "multi",
+		URL:        "https://example.com",
+		Background: "#1D2E79",
+		Accent:     []string{"#F6B93B"},
+		LogoFull:   "assets/logos/full.png",
+		LogoIcon:   "assets/logos/icon.png",
+		Locales: map[string]Texts{
+			"ht": {Tagline: "Bonjou"},
+			"fr": {Tagline: "Bonjour"},
+			"en": {Tagline: "Hello"},
+		},
+		DefaultLocale: "ht",
+	}
+
+	outs, err := Render(root, p, time.Date(2026, 8, 10, 0, 0, 0, 0, time.UTC))
+	if err != nil {
+		t.Fatalf("Render: %v", err)
+	}
+	wants := []string{"og-image.png", "og-image-en.png", "og-image-fr.png", "og-image-ht.png"}
+	if len(outs) != len(wants) {
+		t.Fatalf("outs = %v, want %d files", outs, len(wants))
+	}
+	for i, w := range wants {
+		if outs[i] != filepath.Join(root, "assets", "multi", w) {
+			t.Errorf("outs[%d] = %s, want %s", i, outs[i], w)
+		}
+	}
+
+	def, err := os.ReadFile(filepath.Join(root, "assets", "multi", "og-image.png"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ht, err := os.ReadFile(filepath.Join(root, "assets", "multi", "og-image-ht.png"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(def) != string(ht) {
+		t.Error("og-image.png must be identical to the default locale image")
 	}
 }
 

@@ -12,16 +12,24 @@ type Config struct {
 	Projects []Project `json:"projects"`
 }
 
+type Texts struct {
+	Type        string `json:"type"`
+	Tagline     string `json:"tagline"`
+	Description string `json:"description"`
+}
+
 type Project struct {
-	Name        string   `json:"name"`
-	Type        string   `json:"type"`
-	Tagline     string   `json:"tagline"`
-	Description string   `json:"description"`
-	URL         string   `json:"url"`
-	Background  string   `json:"background"`
-	Accent      []string `json:"accent"`
-	LogoFull    string   `json:"logoFull"`
-	LogoIcon    string   `json:"logoIcon"`
+	Name          string           `json:"name"`
+	Type          string           `json:"type"`
+	Tagline       string           `json:"tagline"`
+	Description   string           `json:"description"`
+	URL           string           `json:"url"`
+	Background    string           `json:"background"`
+	Accent        []string         `json:"accent"`
+	LogoFull      string           `json:"logoFull"`
+	LogoIcon      string           `json:"logoIcon"`
+	Locales       map[string]Texts `json:"locales"`
+	DefaultLocale string           `json:"defaultLocale"`
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -48,8 +56,6 @@ func (p Project) validate() error {
 	switch {
 	case p.Name == "":
 		return fmt.Errorf("name is required")
-	case p.Tagline == "":
-		return fmt.Errorf("tagline is required")
 	case p.URL == "":
 		return fmt.Errorf("url is required")
 	case p.LogoFull == "":
@@ -58,6 +64,26 @@ func (p Project) validate() error {
 		return fmt.Errorf("logoIcon is required")
 	case len(p.Accent) == 0:
 		return fmt.Errorf("accent needs at least one color")
+	}
+	if len(p.Locales) == 0 {
+		if p.Tagline == "" {
+			return fmt.Errorf("tagline is required")
+		}
+	} else {
+		if p.Type != "" || p.Tagline != "" || p.Description != "" {
+			return fmt.Errorf("top-level texts and locales are mutually exclusive")
+		}
+		if p.DefaultLocale == "" {
+			return fmt.Errorf("defaultLocale is required when locales are set")
+		}
+		if _, ok := p.Locales[p.DefaultLocale]; !ok {
+			return fmt.Errorf("defaultLocale %q is not defined in locales", p.DefaultLocale)
+		}
+		for lang, t := range p.Locales {
+			if t.Tagline == "" {
+				return fmt.Errorf("locale %q: tagline is required", lang)
+			}
+		}
 	}
 	if _, err := parseHexColor(p.Background); err != nil {
 		return fmt.Errorf("background: %w", err)

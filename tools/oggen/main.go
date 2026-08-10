@@ -31,10 +31,12 @@ func main() {
 	}
 
 	for _, p := range cfg.Projects {
-		out, err := Render(root, p, time.Now())
+		outs, err := Render(root, p, time.Now())
 		if err != nil {
 			log.Fatalf("project %s: %v", p.Name, err)
 		}
-		fmt.Printf("generated %s\n", out)
+		for _, out := range outs {
+			fmt.Printf("generated %s\n", out)
+		}
 	}
 }

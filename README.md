@@ -34,6 +34,9 @@ PORT=8080 go run ./cmd/karako-cdn
 go -C tools/oggen run .    # regenerate OG images from og.config.json
 ```
 
+Projects with `locales` in `og.config.json` get one `og-image-<lang>.png`
+per language plus `og-image.png` for the `defaultLocale`.
+
 ## Docker
 
 ```bash

@@ -7,6 +7,7 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -77,26 +78,61 @@ func lineHeight(f font.Face) int {
 	return f.Metrics().Height.Ceil()
 }
 
-func Render(root string, p Project, now time.Time) (string, error) {
+type variant struct {
+	texts Texts
+	file  string
+}
+
+// variants lists the images to produce: og-image.png for the default texts,
+// plus one og-image-<lang>.png per declared locale.
+func (p Project) variants() []variant {
+	if len(p.Locales) == 0 {
+		return []variant{{Texts{Type: p.Type, Tagline: p.Tagline, Description: p.Description}, "og-image.png"}}
+	}
+	vs := []variant{{p.Locales[p.DefaultLocale], "og-image.png"}}
+	langs := make([]string, 0, len(p.Locales))
+	for lang := range p.Locales {
+		langs = append(langs, lang)
+	}
+	sort.Strings(langs)
+	for _, lang := range langs {
+		vs = append(vs, variant{p.Locales[lang], "og-image-" + lang + ".png"})
+	}
+	return vs
+}
+
+func Render(root string, p Project, now time.Time) ([]string, error) {
 	bg, err := parseHexColor(p.Background)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	logo, err := loadPNG(filepath.Join(root, p.LogoFull))
 	if err != nil {
-		return "", fmt.Errorf("logoFull: %w", err)
+		return nil, fmt.Errorf("logoFull: %w", err)
 	}
 	logo = trimTransparent(logo)
 	icon, err := loadPNG(filepath.Join(root, p.LogoIcon))
 	if err != nil {
-		return "", fmt.Errorf("logoIcon: %w", err)
+		return nil, fmt.Errorf("logoIcon: %w", err)
 	}
 	icon = trimTransparent(icon)
 	fs, err := loadFaces()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
+	var outs []string
+	for _, v := range p.variants() {
+		out, err := renderOne(root, p, v, bg, logo, icon, fs, now)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", v.file, err)
+		}
+		outs = append(outs, out)
+	}
+	return outs, nil
+}
+
+func renderOne(root string, p Project, v variant, bg color.NRGBA, logo, icon image.Image, fs *faces, now time.Time) (string, error) {
 	canvas := image.NewNRGBA(image.Rect(0, 0, canvasW, canvasH))
 	draw.Draw(canvas, canvas.Bounds(), &image.Uniform{bg}, image.Point{}, draw.Src)
 
@@ -117,12 +153,12 @@ func Render(root string, p Project, now time.Time) (string, error) {
 	dim40 := color.NRGBA{255, 255, 255, 102}
 
 	var blocks []textBlock
-	if p.Type != "" {
-		blocks = append(blocks, textBlock{[]string{strings.ToUpper(p.Type)}, fs.kicker, dim50})
+	if v.texts.Type != "" {
+		blocks = append(blocks, textBlock{[]string{strings.ToUpper(v.texts.Type)}, fs.kicker, dim50})
 	}
-	blocks = append(blocks, textBlock{strings.Split(p.Tagline, "\n"), fs.tagline, white})
-	if p.Description != "" {
-		blocks = append(blocks, textBlock{wrapText(p.Description, fs.body, textMaxWidth), fs.body, dim60})
+	blocks = append(blocks, textBlock{strings.Split(v.texts.Tagline, "\n"), fs.tagline, white})
+	if v.texts.Description != "" {
+		blocks = append(blocks, textBlock{wrapText(v.texts.Description, fs.body, textMaxWidth), fs.body, dim60})
 	}
 	blocks = append(blocks, textBlock{[]string{p.URL}, fs.body, white})
 	blocks = append(blocks, textBlock{[]string{now.Format("2006-01-02")}, fs.small, dim40})
@@ -153,7 +189,7 @@ func Render(root string, p Project, now time.Time) (string, error) {
 		y += blockGap
 	}
 
-	out := filepath.Join(root, "assets", p.Name, "og-image.png")
+	out := filepath.Join(root, "assets", p.Name, v.file)
 	if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
 		return "", err
 	}
