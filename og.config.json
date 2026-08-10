@@ -1,0 +1,25 @@
+{
+  "projects": [
+    {
+      "name": "karako",
+      "type": "Software & IT Services",
+      "tagline": "Digital Intelligence.\nReal Impact.",
+      "description": "Software engineering, systems integration & IT services.",
+      "url": "https://karakosystems.com",
+      "background": "#2D2B55",
+      "accent": ["#6C5CE7", "#8577ED", "#6C5CE7"],
+      "logoFull": "assets/images/karako/logos/logo-full-white.png",
+      "logoIcon": "assets/images/karako/logos/logo-icon-white.png"
+    },
+    {
+      "name": "antwan",
+      "tagline": "Koneksyon w ak Leta",
+      "description": "A Karako Systems product.",
+      "url": "https://antwan.ai",
+      "background": "#1D2E79",
+      "accent": ["#F6B93B", "#E23744", "#7A2E8E"],
+      "logoFull": "assets/images/antwan/logos/logo-full-white.png",
+      "logoIcon": "assets/images/antwan/logos/logo-icon-white.png"
+    }
+  ]
+}
