@@ -37,9 +37,11 @@ go -C tools/oggen run .    # regenerate OG images from og.config.json
 ## Docker
 
 ```bash
-docker buildx build --platform linux/amd64,linux/arm64 -t karako-cdn .
-docker run -p 8080:8080 karako-cdn
+docker compose up --build    # dev on :8080
+docker compose watch         # rebuild on assets/ or code change
 ./test.sh 8080
+
+docker buildx build --platform linux/amd64,linux/arm64 -t karako-cdn .
 ```
 
 The image runs as `nobody` (65534) and listens on 8080. Drains
