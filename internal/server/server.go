@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	BaseFQDN string
+	CDNFQDN  string
 	Addr     string
 }
 
@@ -21,6 +22,9 @@ type Server struct {
 }
 
 func New(cfg Config, assets fs.FS) (*Server, error) {
+	if cfg.CDNFQDN == "" {
+		cfg.CDNFQDN = "cdn." + cfg.BaseFQDN
+	}
 	s := &Server{
 		cfg:       cfg,
 		files:     make(map[string]*fileData),

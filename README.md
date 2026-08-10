@@ -17,7 +17,8 @@ served; embedded directories must not be empty (keep a `.gitkeep`).
 
 - `GET /<path under assets/>` — ETag/304, Range, gzip when accepted,
   `Cache-Control: public, max-age=31536000, immutable`
-- `GET /discover.json` — metadata of every resource, `max-age=600`
+- `GET /discover.json` — compact JSON listing every resource (absolute
+  URL, content type, size, etag), `max-age=600`
 - `GET /health` — `200 healthy`
 - `GET /metrics` — Prometheus counters
 - unknown path with extension — cacheable `404`; without — `302` to
@@ -47,4 +48,6 @@ connections on SIGTERM.
 ## Configuration
 
 - `BASE_FQDN` (default `karakosystems.com`) — redirect target.
+- `CDN_FQDN` (default `cdn.{BASE_FQDN}`) — host used for the absolute
+  URLs in `discover.json`.
 - `PORT` (default `80`; the Docker image sets `8080`).

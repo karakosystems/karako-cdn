@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -22,18 +23,19 @@ func (s *Server) buildDiscover() error {
 		return fmt.Errorf("embedded asset %s collides with the generated discovery endpoint", discoverPath)
 	}
 
+	base := "https://" + s.cfg.CDNFQDN
 	resources := make([]resourceInfo, 0, len(s.files))
 	for p, fd := range s.files {
 		resources = append(resources, resourceInfo{
-			Path:        p,
+			Path:        base + p,
 			ContentType: contentTypeFor(p),
 			Size:        len(fd.content),
-			ETag:        s.etags[p],
+			ETag:        strings.Trim(s.etags[p], `"`),
 		})
 	}
 	sort.Slice(resources, func(i, j int) bool { return resources[i].Path < resources[j].Path })
 
-	payload, err := json.MarshalIndent(map[string][]resourceInfo{"resources": resources}, "", "  ")
+	payload, err := json.Marshal(map[string][]resourceInfo{"resources": resources})
 	if err != nil {
 		return err
 	}

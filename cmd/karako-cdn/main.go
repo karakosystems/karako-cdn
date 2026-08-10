@@ -20,7 +20,11 @@ func main() {
 	if port == "" {
 		port = "80"
 	}
-	cfg := server.Config{BaseFQDN: os.Getenv("BASE_FQDN"), Addr: ":" + port}
+	cfg := server.Config{
+		BaseFQDN: os.Getenv("BASE_FQDN"),
+		CDNFQDN:  os.Getenv("CDN_FQDN"),
+		Addr:     ":" + port,
+	}
 	if cfg.BaseFQDN == "" {
 		cfg.BaseFQDN = "karakosystems.com"
 	}

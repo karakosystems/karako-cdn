@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"sort"
+	"strings"
 	"testing"
 	"testing/fstest"
 )
@@ -47,8 +48,8 @@ func TestDiscoverListsResourcesWithMetadata(t *testing.T) {
 	}
 
 	logo := payload.Resources[0] // sorted: /images/... < /json/...
-	if logo.Path != "/images/karako/logos/logo.png" {
-		t.Fatalf("first path = %q", logo.Path)
+	if logo.Path != "https://cdn.karakosystems.com/images/karako/logos/logo.png" {
+		t.Fatalf("first path = %q, want absolute URL", logo.Path)
 	}
 	if logo.ContentType != "image/png" {
 		t.Errorf("contentType = %q", logo.ContentType)
@@ -56,9 +57,17 @@ func TestDiscoverListsResourcesWithMetadata(t *testing.T) {
 	if logo.Size != len("png-bytes") {
 		t.Errorf("size = %d, want %d", logo.Size, len("png-bytes"))
 	}
-	wantETag := do(t, srv, http.MethodGet, "/images/karako/logos/logo.png", nil).Header().Get("ETag")
+	wantETag := strings.Trim(do(t, srv, http.MethodGet, "/images/karako/logos/logo.png", nil).Header().Get("ETag"), `"`)
 	if logo.ETag != wantETag {
-		t.Errorf("etag = %q, want %q (same as the served ETag header)", logo.ETag, wantETag)
+		t.Errorf("etag = %q, want %q (served ETag without quotes)", logo.ETag, wantETag)
+	}
+}
+
+func TestDiscoverPayloadIsCompactJSON(t *testing.T) {
+	srv := newTestServer(t)
+	body := do(t, srv, http.MethodGet, "/discover.json", nil).Body.String()
+	if strings.Contains(body, "\n") {
+		t.Error("discover.json must be compact (no indentation)")
 	}
 }
 
