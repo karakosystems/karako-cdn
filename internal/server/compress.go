@@ -3,7 +3,6 @@ package server
 import (
 	"bytes"
 	"compress/gzip"
-	"crypto/md5"
 	"fmt"
 	"strings"
 )
@@ -42,7 +41,7 @@ func (s *Server) compressAll() error {
 			continue
 		}
 		s.gzips[p] = &fileData{content: buf.Bytes(), modTime: fd.modTime}
-		s.gzipETags[p] = fmt.Sprintf("\"%x\"", md5.Sum(buf.Bytes()))
+		s.gzipETags[p] = etagFor(buf.Bytes())
 	}
 	return nil
 }

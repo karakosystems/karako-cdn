@@ -1,8 +1,6 @@
 package server
 
 import (
-	"crypto/md5"
-	"fmt"
 	"testing"
 	"testing/fstest"
 )
@@ -27,7 +25,7 @@ func TestLoadFilesMapsPathsAndETags(t *testing.T) {
 	if string(fd.content) != "png-bytes" {
 		t.Errorf("unexpected content: %q", fd.content)
 	}
-	wantETag := fmt.Sprintf("\"%x\"", md5.Sum([]byte("png-bytes")))
+	wantETag := etagFor([]byte("png-bytes"))
 	if etags["/karako/logos/logo.png"] != wantETag {
 		t.Errorf("etag = %q, want %q", etags["/karako/logos/logo.png"], wantETag)
 	}

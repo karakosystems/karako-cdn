@@ -1,7 +1,6 @@
 package server
 
 import (
-	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"sort"
@@ -41,6 +40,6 @@ func (s *Server) buildDiscover() error {
 	}
 
 	s.files[discoverPath] = &fileData{content: payload, modTime: time.Now()}
-	s.etags[discoverPath] = fmt.Sprintf("\"%x\"", md5.Sum(payload))
+	s.etags[discoverPath] = etagFor(payload)
 	return nil
 }

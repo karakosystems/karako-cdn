@@ -28,7 +28,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "/health":
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("healthy\n"))
+		_, _ = w.Write([]byte("healthy\n"))
 		return
 	case metricsPath:
 		s.serveMetrics(w)

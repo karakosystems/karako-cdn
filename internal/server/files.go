@@ -1,7 +1,7 @@
 package server
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	"fmt"
 	"io/fs"
 	"path"
@@ -12,6 +12,11 @@ import (
 type fileData struct {
 	content []byte
 	modTime time.Time
+}
+
+func etagFor(content []byte) string {
+	sum := sha256.Sum256(content)
+	return fmt.Sprintf("\"%x\"", sum[:16])
 }
 
 func loadFiles(fsys fs.FS, root string, files map[string]*fileData, etags map[string]string) error {
@@ -33,7 +38,7 @@ func loadFiles(fsys fs.FS, root string, files map[string]*fileData, etags map[st
 		}
 		urlPath := strings.TrimPrefix(p, root)
 		files[urlPath] = &fileData{content: content, modTime: now}
-		etags[urlPath] = fmt.Sprintf("\"%x\"", md5.Sum(content))
+		etags[urlPath] = etagFor(content)
 		return nil
 	})
 }

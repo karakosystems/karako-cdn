@@ -5,6 +5,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -13,9 +14,12 @@ func main() {
 	if port == "" {
 		port = "80"
 	}
+	if _, err := strconv.Atoi(port); err != nil {
+		os.Exit(1)
+	}
 
 	client := &http.Client{Timeout: 2 * time.Second}
-	resp, err := client.Get("http://localhost:" + port + "/health")
+	resp, err := client.Get("http://localhost:" + port + "/health") // #nosec G704 -- localhost probe, port validated above
 	if err != nil {
 		os.Exit(1)
 	}
