@@ -1,58 +1,45 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/karako/logos/logo-full-white.png">
+    <img src="assets/karako/logos/logo-full-navy.png" alt="Karako" width="300">
+  </picture>
+</p>
+
 # karako-cdn
 
-Karako's static asset CDN: a small Go server that embeds `assets/` into
-the binary and serves it with aggressive HTTP caching, gzip, open CORS
-and redirects. Scratch Docker image (~10 MB), AMD64/ARM64, zero
-dependencies.
+Karako's static asset CDN: a Go server that embeds `assets/` into the
+binary. Scratch Docker image (~10 MB), zero dependencies.
 
-**URL rule: the path under `assets/` is the URL.**
-`assets/karako/logos/logo-icon-black.png` →
-`/karako/logos/logo-icon-black.png`.
-
-To publish a file, drop it under `assets/` (lowercase kebab-case) and
-rebuild — content is embedded at compile time. Dotfiles are never
-served; embedded directories must not be empty (keep a `.gitkeep`).
+**The path under `assets/` is the URL** — drop a file (lowercase
+kebab-case), rebuild, it is served with immutable caching, ETag/304,
+gzip and open CORS. Dotfiles are never served.
 
 ## Endpoints
 
-- `GET /<path under assets/>` — ETag/304, Range, gzip when accepted,
-  `Cache-Control: public, max-age=31536000, immutable`
-- `GET /discover.json` — compact JSON listing every resource (absolute
-  URL, content type, size, etag), `max-age=600`
-- `GET /health` — `200 healthy`
-- `GET /metrics` — Prometheus counters
-- unknown path with extension — cacheable `404`; without — `302` to
-  `https://{BASE_FQDN}`
-- `OPTIONS *` — `204`, `Access-Control-Allow-Origin: *`
+- `GET /<path>` — asset (`max-age=31536000, immutable`, Range, gzip)
+- `GET /discover.json` — compact list of every resource (absolute URLs)
+- `GET /health` · `GET /metrics` — probe and Prometheus counters
+- unknown path: cacheable `404` (with extension), `302` to
+  `https://{BASE_FQDN}` (without)
 
-## Development
+## Usage
 
 ```bash
-go build ./...
-go test ./...
-PORT=8080 go run ./cmd/karako-cdn
-go -C tools/oggen run .    # regenerate OG images from og.config.json
+go test ./...                        # unit + embed tests
+PORT=8080 go run ./cmd/karako-cdn    # run locally
+docker compose up --build            # dev container on :8080
+./test.sh 8080                       # integration suite
+go -C tools/oggen run .              # regenerate OG images
 ```
 
-Projects with `locales` in `og.config.json` get one `og-image-<lang>.png`
-per language plus `og-image.png` for the `defaultLocale`.
-
-## Docker
-
-```bash
-docker compose up --build    # dev on :8080
-docker compose watch         # rebuild on assets/ or code change
-./test.sh 8080
-
-docker buildx build --platform linux/amd64,linux/arm64 -t karako-cdn .
-```
-
-The image runs as `nobody` (65534) and listens on 8080. Drains
-connections on SIGTERM.
+The image runs as `nobody` on 8080 and drains connections on SIGTERM.
+Projects with `locales` in `og.config.json` get one OG image per
+language.
 
 ## Configuration
 
-- `BASE_FQDN` (default `karakosystems.com`) — redirect target.
-- `CDN_FQDN` (default `cdn.{BASE_FQDN}`) — host used for the absolute
-  URLs in `discover.json`.
-- `PORT` (default `80`; the Docker image sets `8080`).
+| Variable    | Default            | Purpose                          |
+| ----------- | ------------------ | -------------------------------- |
+| `BASE_FQDN` | `karakosystems.com`| redirect target                  |
+| `CDN_FQDN`  | `cdn.{BASE_FQDN}`  | absolute URLs in `discover.json` |
+| `PORT`      | `80` (Docker: `8080`) | listen port                   |
