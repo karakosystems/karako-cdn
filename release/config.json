@@ -4,7 +4,7 @@
   "packages": {
     ".": {
       "release-type": "simple",
-      "package-name": "cdn",
+      "package-name": "karako-cdn",
       "changelog-path": "CHANGELOG.md"
     }
   }
