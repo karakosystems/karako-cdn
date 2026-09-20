@@ -35,9 +35,9 @@ func TestMetricsCountsResponseClasses(t *testing.T) {
 
 func TestMetricsCollisionFailsAtStartup(t *testing.T) {
 	assets := fstest.MapFS{
-		"assets/metrics": {Data: []byte("shadowing")},
+		"metrics": {Data: []byte("shadowing")},
 	}
 	if _, err := New(Config{BaseFQDN: "karakosystems.com"}, assets); err == nil {
-		t.Fatal("New must fail when an embedded asset collides with /metrics")
+		t.Fatal("New must fail when an asset collides with /metrics")
 	}
 }

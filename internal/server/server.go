@@ -32,14 +32,14 @@ func New(cfg Config, assets fs.FS) (*Server, error) {
 		gzips:     make(map[string]*fileData),
 		gzipETags: make(map[string]string),
 	}
-	if err := loadFiles(assets, "assets", s.files, s.etags); err != nil {
+	if err := loadFiles(assets, s.files, s.etags); err != nil {
 		return nil, err
 	}
 	if err := s.buildDiscover(); err != nil {
 		return nil, err
 	}
 	if _, exists := s.files[metricsPath]; exists {
-		return nil, fmt.Errorf("embedded asset %s collides with the metrics endpoint", metricsPath)
+		return nil, fmt.Errorf("asset %s collides with the metrics endpoint", metricsPath)
 	}
 	if err := s.compressAll(); err != nil {
 		return nil, err

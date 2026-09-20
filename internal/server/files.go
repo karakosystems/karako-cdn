@@ -19,9 +19,9 @@ func etagFor(content []byte) string {
 	return fmt.Sprintf("\"%x\"", sum[:16])
 }
 
-func loadFiles(fsys fs.FS, root string, files map[string]*fileData, etags map[string]string) error {
+func loadFiles(fsys fs.FS, files map[string]*fileData, etags map[string]string) error {
 	now := time.Now()
-	return fs.WalkDir(fsys, root, func(p string, d fs.DirEntry, err error) error {
+	return fs.WalkDir(fsys, ".", func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -36,7 +36,7 @@ func loadFiles(fsys fs.FS, root string, files map[string]*fileData, etags map[st
 		if err != nil {
 			return fmt.Errorf("reading %s: %w", p, err)
 		}
-		urlPath := strings.TrimPrefix(p, root)
+		urlPath := "/" + p
 		files[urlPath] = &fileData{content: content, modTime: now}
 		etags[urlPath] = etagFor(content)
 		return nil

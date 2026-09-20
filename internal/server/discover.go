@@ -19,7 +19,7 @@ type resourceInfo struct {
 
 func (s *Server) buildDiscover() error {
 	if _, exists := s.files[discoverPath]; exists {
-		return fmt.Errorf("embedded asset %s collides with the generated discovery endpoint", discoverPath)
+		return fmt.Errorf("asset %s collides with the generated discovery endpoint", discoverPath)
 	}
 
 	base := "https://" + s.cfg.CDNFQDN

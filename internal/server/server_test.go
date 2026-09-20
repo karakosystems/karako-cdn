@@ -10,9 +10,9 @@ import (
 func newTestServer(t *testing.T) *Server {
 	t.Helper()
 	assets := fstest.MapFS{
-		"assets/json/config/app.json":  {Data: []byte(`{"ok":true}`)},
-		"assets/json/.gitkeep":         {Data: nil},
-		"assets/karako/logos/logo.png": {Data: []byte("png-bytes")},
+		"json/config/app.json":  {Data: []byte(`{"ok":true}`)},
+		"json/.gitkeep":         {Data: nil},
+		"karako/logos/logo.png": {Data: []byte("png-bytes")},
 	}
 	srv, err := New(Config{BaseFQDN: "karakosystems.com", Addr: ":80"}, assets)
 	if err != nil {

@@ -11,27 +11,30 @@ import (
 	"syscall"
 	"time"
 
-	karakocdn "github.com/karakosystems/karako-cdn"
 	"github.com/karakosystems/karako-cdn/internal/server"
 )
 
-func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "80"
+func envOr(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
 	}
+	return fallback
+}
+
+func main() {
 	cfg := server.Config{
 		BaseFQDN: os.Getenv("BASE_FQDN"),
 		CDNFQDN:  os.Getenv("CDN_FQDN"),
-		Addr:     ":" + port,
+		Addr:     ":" + envOr("PORT", "80"),
 	}
 	if cfg.BaseFQDN == "" {
-		cfg.BaseFQDN = "karakosystems.com"
+		log.Fatal("BASE_FQDN is required (redirect target, e.g. example.com)")
 	}
+	assetsDir := envOr("ASSETS_DIR", "assets")
 
-	srv, err := server.New(cfg, karakocdn.Assets)
+	srv, err := server.New(cfg, os.DirFS(assetsDir))
 	if err != nil {
-		log.Fatal("loading embedded assets: ", err)
+		log.Fatalf("loading assets from %s: %v", assetsDir, err)
 	}
 
 	paths := srv.Paths()

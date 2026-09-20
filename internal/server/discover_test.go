@@ -93,9 +93,9 @@ func TestDiscoverSupports304(t *testing.T) {
 
 func TestDiscoverCollisionFailsAtStartup(t *testing.T) {
 	assets := fstest.MapFS{
-		"assets/discover.json": {Data: []byte(`{"fake":true}`)},
+		"discover.json": {Data: []byte(`{"fake":true}`)},
 	}
 	if _, err := New(Config{BaseFQDN: "karakosystems.com", Addr: ":80"}, assets); err == nil {
-		t.Fatal("New must fail when an embedded asset collides with /discover.json")
+		t.Fatal("New must fail when an asset collides with /discover.json")
 	}
 }

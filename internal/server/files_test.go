@@ -7,14 +7,14 @@ import (
 
 func TestLoadFilesMapsPathsAndETags(t *testing.T) {
 	fsys := fstest.MapFS{
-		"assets/karako/logos/logo.png": {Data: []byte("png-bytes")},
-		"assets/karako/notes.txt":      {Data: []byte("any file is served")},
-		"assets/json/.gitkeep":         {Data: nil},
+		"karako/logos/logo.png": {Data: []byte("png-bytes")},
+		"karako/notes.txt":      {Data: []byte("any file is served")},
+		"json/.gitkeep":         {Data: nil},
 	}
 	files := map[string]*fileData{}
 	etags := map[string]string{}
 
-	if err := loadFiles(fsys, "assets", files, etags); err != nil {
+	if err := loadFiles(fsys, files, etags); err != nil {
 		t.Fatalf("loadFiles: %v", err)
 	}
 

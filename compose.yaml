@@ -4,16 +4,14 @@ services:
     ports:
       - "8080:8080"
     environment:
-      BASE_FQDN: karakosystems.com
+      BASE_FQDN: example.com
+    volumes:
+      - ./example/assets:/assets:ro
     develop:
       watch:
-        - action: rebuild
-          path: assets
         - action: rebuild
           path: internal
         - action: rebuild
           path: cmd
-        - action: rebuild
-          path: embed.go
         - action: rebuild
           path: go.mod

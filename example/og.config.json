@@ -1,0 +1,19 @@
+{
+  "projects": [
+    {
+      "name": "karako",
+      "type": "Software & IT Services",
+      "tagline": "Digital Intelligence.\nReal Impact.",
+      "description": "Software engineering, systems integration & IT services.",
+      "url": "https://karakosystems.com",
+      "background": "#2D2B55",
+      "accent": [
+        "#6C5CE7",
+        "#8577ED",
+        "#6C5CE7"
+      ],
+      "logoFull": "assets/karako/logos/logo-full-white.png",
+      "logoIcon": "assets/karako/logos/logo-icon-white.png"
+    }
+  ]
+}

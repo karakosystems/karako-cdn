@@ -1,18 +1,18 @@
-package karakocdn_test
+package server_test
 
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
-	karakocdn "github.com/karakosystems/karako-cdn"
 	"github.com/karakosystems/karako-cdn/internal/server"
 )
 
-func TestRealEmbeddedLogosAreServed(t *testing.T) {
+func TestExampleAssetsAreServed(t *testing.T) {
 	srv, err := server.New(
 		server.Config{BaseFQDN: "karakosystems.com", Addr: ":80"},
-		karakocdn.Assets,
+		os.DirFS("../../example/assets"),
 	)
 	if err != nil {
 		t.Fatalf("New: %v", err)
@@ -21,10 +21,6 @@ func TestRealEmbeddedLogosAreServed(t *testing.T) {
 	for _, target := range []string{
 		"/karako/logos/logo-icon-black.png",
 		"/karako/logos/logo-full-navy.png",
-		"/antwan/logos/logo-full-color.png",
-		"/antwan/logos/logo-icon-color.png",
-		"/karako/og-image.png",
-		"/antwan/og-image.png",
 	} {
 		rec := httptest.NewRecorder()
 		srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, target, nil))
