@@ -18,7 +18,7 @@ dependencies. Inspired by
 Give your project an `assets/` folder and this Dockerfile:
 
 ```dockerfile
-FROM ghcr.io/karakosystems/karako-cdn:0.1
+FROM ghcr.io/karakosystems/karako-cdn:1
 ENV BASE_FQDN=example.com
 COPY --chown=65534:65534 assets/ /assets/
 ```
@@ -69,7 +69,7 @@ example `assets/brand/logo-full-white.png`).
 | `PORT`       | `80` (Docker: `8080`)        | listen port                      |
 
 The image runs as `nobody` (65534) on 8080 and drains connections on
-SIGTERM. Tags follow semver (`0.1.0`, `0.1`, `latest`) for `linux/amd64`
+SIGTERM. Tags follow semver (`1.0.0`, `1.0`, `1`, `latest`) for `linux/amd64`
 and `linux/arm64`.
 
 ## Development
