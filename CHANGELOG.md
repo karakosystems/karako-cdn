@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/karakosystems/karako-cdn/compare/karako-cdn-v1.0.0...karako-cdn-v1.0.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* publication sans la cible server supprimée du Dockerfile ([c765ab1](https://github.com/karakosystems/karako-cdn/commit/c765ab1378273332384a603bf2794e18983b1a46))
+
 ## 1.0.0 (2026-09-21)
 
 
