@@ -41,7 +41,9 @@ paths get a `404` when they have an extension, otherwise a `302` to
 
 The image runs as `nobody` (65534) on 8080, drains on SIGTERM, and is
 tagged `1.0.0`, `1.0`, `1`, `latest` and `sha-<commit>` for amd64 and
-arm64.
+arm64. Releases publish to GHCR, and to Docker Hub when the repository
+sets the `DOCKERHUB_REPO` and `DOCKERHUB_USERNAME` variables plus the
+`DOCKERHUB_TOKEN` secret.
 
 ## Open Graph images
 
