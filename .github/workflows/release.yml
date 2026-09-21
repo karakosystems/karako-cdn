@@ -49,6 +49,7 @@ jobs:
             type=sha,format=long
           labels: |
             org.opencontainers.image.title=karako-cdn
+            org.opencontainers.image.description=Static asset CDN as a Docker image: drop a folder in and get caching, ETag/304, gzip, Range, open CORS, /discover.json, Prometheus metrics and build-time Open Graph images.
             org.opencontainers.image.documentation=https://github.com/${{ github.repository }}#readme
             org.opencontainers.image.vendor=Karako Systems
             org.opencontainers.image.authors=Louis Midson Lajeanty (@midsonlajeanty)
@@ -78,4 +79,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ vars.DOCKERHUB_REPO }}
           readme-filepath: /tmp/dockerhub-readme.md
-          short-description: ${{ github.event.repository.description }}
+          short-description: Static asset CDN as a Docker image. Drop a folder in, serve it fast.
