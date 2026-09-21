@@ -20,7 +20,7 @@ harassment, publishing others' private information without permission.
 
 ## Enforcement
 
-Report unacceptable behaviour to conduct@karakosystems.com. All reports
+Report unacceptable behaviour to contact@karakosystems.com. All reports
 are reviewed promptly and kept confidential. Maintainers may edit or
 remove contributions, and temporarily or permanently ban anyone, for
 behaviour they consider inappropriate.
