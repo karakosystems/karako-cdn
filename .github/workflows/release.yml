@@ -30,7 +30,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      # Optional mirror: set the DOCKERHUB_REPO variable and the DOCKERHUB_TOKEN secret
       - if: vars.DOCKERHUB_REPO != ''
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
