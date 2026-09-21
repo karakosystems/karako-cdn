@@ -8,11 +8,9 @@
 # karako-cdn
 
 A static asset CDN as a Docker image. It loads a folder into memory at
-startup and serves it with immutable caching, ETag/304, gzip, Range and
-open CORS. Scratch image, zero dependencies. Inspired by
+startup and serves it with caching, ETag/304, gzip, Range and open CORS.
+Scratch image, zero dependencies. Inspired by
 [coolify-cdn](https://github.com/coollabsio/coolify-cdn).
-
-## Usage
 
 ```dockerfile
 FROM ghcr.io/karakosystems/karako-cdn:1
@@ -20,19 +18,30 @@ ENV BASE_FQDN=example.com
 COPY --chown=65534:65534 public/ /public/
 ```
 
-```bash
-docker build -t my-cdn . && docker run -p 8080:8080 my-cdn
-```
-
 **The path under `public/` is the URL**: `public/brand/logo.png` is
 served at `/brand/logo.png`. Any file type is served, dotfiles never
-are.
+are. Files are cached for a year, so change the URL (`logo.png?v=2`)
+when one changes; scripts and configuration (`.sh`, `.json`, `.yaml`,
+`.toml`, ...) instead revalidate every 10 minutes, so
+`curl -fsSL https://cdn.example.com/install.sh | sh` stays current.
 
-Files are cached for a year, so change the URL (`logo.png?v=2`) when one
-changes. Scripts and configuration (`.sh`, `.json`, `.yaml`, `.toml`,
-`.txt`, ...) are the exception: they revalidate every 10 minutes, so
-`curl -fsSL https://cdn.example.com/install.sh | sh` always runs the
-current version.
+Besides your files, the server answers `/discover.json` (every resource,
+with absolute URLs), `/health` and `/metrics` (Prometheus). Unknown
+paths get a `404` when they have an extension, otherwise a `302` to
+`BASE_FQDN`.
+
+## Configuration
+
+| Variable     | Default                      | Purpose                          |
+| ------------ | ---------------------------- | -------------------------------- |
+| `BASE_FQDN`  | required                     | redirect target                  |
+| `CDN_FQDN`   | `cdn.{BASE_FQDN}`            | absolute URLs in `discover.json` |
+| `PUBLIC_DIR` | `public` (Docker: `/public`) | folder served                    |
+| `PORT`       | `80` (Docker: `8080`)        | listen port                      |
+
+The image runs as `nobody` (65534) on 8080, drains on SIGTERM, and is
+tagged `1.0.0`, `1.0`, `1`, `latest` and `sha-<commit>` for amd64 and
+arm64.
 
 ## Open Graph images
 
@@ -45,27 +54,8 @@ RUN ["/oggen", "-root", "/"]
 ```
 
 Each project in the config produces `public/<name>/og-image.png`, or one
-per language when it declares `locales`. See [`example/`](example).
-
-## Endpoints
-
-- `GET /<path>`: asset (Range, gzip)
-- `GET /discover.json`: every resource, with absolute URLs
-- `GET /health` · `GET /metrics`: probe and Prometheus counters
-- unknown path: `404` when it has an extension, otherwise `302` to
-  `https://{BASE_FQDN}`
-
-## Configuration
-
-| Variable     | Default                      | Purpose                          |
-| ------------ | ---------------------------- | -------------------------------- |
-| `BASE_FQDN`  | required                     | redirect target                  |
-| `CDN_FQDN`   | `cdn.{BASE_FQDN}`            | absolute URLs in `discover.json` |
-| `PUBLIC_DIR` | `public` (Docker: `/public`) | folder served                    |
-| `PORT`       | `80` (Docker: `8080`)        | listen port                      |
-
-The image runs as `nobody` (65534) on 8080, drains on SIGTERM, and is
-tagged `1.0.0`, `1.0`, `1` and `latest` for amd64 and arm64.
+per language when it declares `locales`. See [`example/`](example) for a
+complete project.
 
 ## Contributing
 
