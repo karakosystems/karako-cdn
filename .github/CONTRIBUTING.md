@@ -12,7 +12,7 @@ BASE_FQDN=example.com PORT=8080 PUBLIC_DIR=example/public go run ./cmd/karako-cd
 lefthook install                           # git hooks
 ```
 
-Everything in the repository is written in English. The server module
+Everything in the repository is written in English, commit messages included. The server module
 keeps zero external dependencies: anything needing a library belongs in
 a separate module under `tools/`.
 
