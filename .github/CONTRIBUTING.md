@@ -7,7 +7,7 @@ Thanks for taking the time. Issues and pull requests are welcome.
 ```bash
 go test ./...                              # unit tests
 go -C tools/oggen test ./...               # oggen tests (separate module)
-BASE_FQDN=example.com PORT=8080 ASSETS_DIR=example/assets go run ./cmd/karako-cdn
+BASE_FQDN=example.com PORT=8080 PUBLIC_DIR=example/public go run ./cmd/karako-cdn
 ./test.sh 8080                             # integration suite
 lefthook install                           # git hooks
 ```

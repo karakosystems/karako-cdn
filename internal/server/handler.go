@@ -9,7 +9,19 @@ import (
 	"strings"
 )
 
-const missCacheControl = "public, max-age=300"
+const (
+	missCacheControl       = "public, max-age=300"
+	immutableCacheControl  = "public, max-age=31536000, immutable"
+	revalidateCacheControl = "public, must-revalidate, max-age=600"
+)
+
+// Scripts and configuration are fetched by their stable URL (install.sh,
+// config.json), so they must revalidate instead of being pinned for a year.
+var revalidatedExtensions = map[string]bool{
+	".sh": true, ".bash": true, ".ps1": true, ".py": true,
+	".json": true, ".yaml": true, ".yml": true, ".toml": true,
+	".txt": true, ".xml": true, ".csv": true,
+}
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -86,10 +98,10 @@ func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func cacheControlFor(p string) string {
-	if p == discoverPath {
-		return "public, must-revalidate, max-age=600"
+	if p == discoverPath || revalidatedExtensions[strings.ToLower(path.Ext(p))] {
+		return revalidateCacheControl
 	}
-	return "public, max-age=31536000, immutable"
+	return immutableCacheControl
 }
 
 var contentTypes = map[string]string{
@@ -105,6 +117,19 @@ var contentTypes = map[string]string{
 	".css":   "text/css; charset=utf-8",
 	".js":    "text/javascript; charset=utf-8",
 	".txt":   "text/plain; charset=utf-8",
+	".sh":    "text/x-shellscript; charset=utf-8",
+	".bash":  "text/x-shellscript; charset=utf-8",
+	".ps1":   "text/plain; charset=utf-8",
+	".py":    "text/x-python; charset=utf-8",
+	".yaml":  "application/yaml; charset=utf-8",
+	".yml":   "application/yaml; charset=utf-8",
+	".toml":  "application/toml; charset=utf-8",
+	".xml":   "application/xml; charset=utf-8",
+	".csv":   "text/csv; charset=utf-8",
+	".wasm":  "application/wasm",
+	".map":   "application/json",
+	".zip":   "application/zip",
+	".gz":    "application/gzip",
 	".pdf":   "application/pdf",
 	".woff2": "font/woff2",
 	".woff":  "font/woff",

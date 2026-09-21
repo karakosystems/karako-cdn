@@ -14,7 +14,9 @@ func compressible(contentType string) bool {
 	case strings.HasPrefix(contentType, "text/"),
 		strings.HasPrefix(contentType, "application/json"),
 		strings.HasPrefix(contentType, "application/xml"),
-		strings.HasPrefix(contentType, "application/pdf"),
+		strings.HasPrefix(contentType, "application/yaml"),
+		strings.HasPrefix(contentType, "application/toml"),
+		strings.HasPrefix(contentType, "application/wasm"),
 		strings.HasPrefix(contentType, "image/svg+xml"):
 		return true
 	}

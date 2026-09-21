@@ -146,3 +146,38 @@ func TestContentTypeFallsBackToBuiltinTable(t *testing.T) {
 		t.Errorf("css = %q, want text/css; charset=utf-8", ct)
 	}
 }
+
+func TestScriptsAndConfigRevalidate(t *testing.T) {
+	fsys := fstest.MapFS{
+		"install.sh":     {Data: []byte("#!/bin/sh\necho hello\n")},
+		"config.json":    {Data: []byte(`{"version":1}`)},
+		"brand/logo.png": {Data: []byte("png-bytes")},
+	}
+	srv, err := New(Config{BaseFQDN: "example.com", Addr: ":80"}, fsys)
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+
+	cases := []struct {
+		target       string
+		cacheControl string
+		contentType  string
+	}{
+		{"/install.sh", revalidateCacheControl, "text/x-shellscript; charset=utf-8"},
+		{"/config.json", revalidateCacheControl, "application/json"},
+		{"/brand/logo.png", immutableCacheControl, "image/png"},
+	}
+	for _, c := range cases {
+		rec := httptest.NewRecorder()
+		srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, c.target, nil))
+		if rec.Code != http.StatusOK {
+			t.Fatalf("%s: status = %d", c.target, rec.Code)
+		}
+		if cc := rec.Header().Get("Cache-Control"); cc != c.cacheControl {
+			t.Errorf("%s: Cache-Control = %q, want %q", c.target, cc, c.cacheControl)
+		}
+		if ct := rec.Header().Get("Content-Type"); ct != c.contentType {
+			t.Errorf("%s: Content-Type = %q, want %q", c.target, ct, c.contentType)
+		}
+	}
+}

@@ -12,8 +12,8 @@
         "#8577ED",
         "#6C5CE7"
       ],
-      "logoFull": "assets/karako/logos/logo-full-white.png",
-      "logoIcon": "assets/karako/logos/logo-icon-white.png"
+      "logoFull": "public/karako/logos/logo-full-white.png",
+      "logoIcon": "public/karako/logos/logo-icon-white.png"
     }
   ]
 }

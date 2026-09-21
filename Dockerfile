@@ -27,7 +27,7 @@ COPY --from=builder /app/karako-cdn /karako-cdn
 COPY --from=builder /app/healthcheck /healthcheck
 COPY --from=builder /app/oggen /oggen
 
-ENV ASSETS_DIR=/assets
+ENV PUBLIC_DIR=/public
 ENV PORT=8080
 
 USER 65534:65534

@@ -27,8 +27,8 @@ const validConfig = `{
       "url": "https://karakosystems.com",
       "background": "#2D2B55",
       "accent": ["#6C5CE7", "#8577ed"],
-      "logoFull": "assets/full.png",
-      "logoIcon": "assets/icon.png"
+      "logoFull": "public/full.png",
+      "logoIcon": "public/icon.png"
     }
   ]
 }`
@@ -59,8 +59,8 @@ func TestLoadConfigErrors(t *testing.T) {
 		"missing name":     {`"name": "karako"`, "name is required"},
 		"missing tagline":  {`"tagline": "Digital Intelligence.\nReal Impact."`, "tagline is required"},
 		"missing url":      {`"url": "https://karakosystems.com"`, "url is required"},
-		"missing logoFull": {`"logoFull": "assets/full.png"`, "logoFull is required"},
-		"missing logoIcon": {`"logoIcon": "assets/icon.png"`, "logoIcon is required"},
+		"missing logoFull": {`"logoFull": "public/full.png"`, "logoFull is required"},
+		"missing logoIcon": {`"logoIcon": "public/icon.png"`, "logoIcon is required"},
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {

@@ -189,7 +189,7 @@ func renderOne(root string, p Project, v variant, bg color.NRGBA, logo, icon ima
 		y += blockGap
 	}
 
-	out := filepath.Join(root, "assets", p.Name, v.file)
+	out := filepath.Join(root, "public", p.Name, v.file)
 	if err := os.MkdirAll(filepath.Dir(out), 0o750); err != nil {
 		return "", err
 	}

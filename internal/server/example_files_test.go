@@ -9,10 +9,10 @@ import (
 	"github.com/karakosystems/karako-cdn/internal/server"
 )
 
-func TestExampleAssetsAreServed(t *testing.T) {
+func TestExampleFilesAreServed(t *testing.T) {
 	srv, err := server.New(
 		server.Config{BaseFQDN: "karakosystems.com", Addr: ":80"},
-		os.DirFS("../../example/assets"),
+		os.DirFS("../../example/public"),
 	)
 	if err != nil {
 		t.Fatalf("New: %v", err)

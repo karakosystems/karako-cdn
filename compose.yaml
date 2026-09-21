@@ -6,7 +6,7 @@ services:
     environment:
       BASE_FQDN: example.com
     volumes:
-      - ./example/assets:/assets:ro
+      - ./example/public:/public:ro
     develop:
       watch:
         - action: rebuild

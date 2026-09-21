@@ -30,11 +30,11 @@ func main() {
 	if cfg.BaseFQDN == "" {
 		log.Fatal("BASE_FQDN is required (redirect target, e.g. example.com)")
 	}
-	assetsDir := envOr("ASSETS_DIR", "assets")
+	publicDir := envOr("PUBLIC_DIR", "public")
 
-	srv, err := server.New(cfg, os.DirFS(assetsDir))
+	srv, err := server.New(cfg, os.DirFS(publicDir))
 	if err != nil {
-		log.Fatalf("loading assets from %s: %v", assetsDir, err)
+		log.Fatalf("loading files from %s: %v", publicDir, err)
 	}
 
 	paths := srv.Paths()

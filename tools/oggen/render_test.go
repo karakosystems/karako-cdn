@@ -58,8 +58,8 @@ func TestWrapText(t *testing.T) {
 
 func TestRenderEndToEnd(t *testing.T) {
 	root := t.TempDir()
-	writeTestPNG(t, filepath.Join(root, "assets", "logos", "full.png"), 300, 100)
-	writeTestPNG(t, filepath.Join(root, "assets", "logos", "icon.png"), 100, 100)
+	writeTestPNG(t, filepath.Join(root, "public", "logos", "full.png"), 300, 100)
+	writeTestPNG(t, filepath.Join(root, "public", "logos", "icon.png"), 100, 100)
 
 	p := Project{
 		Name:        "testproj",
@@ -69,15 +69,15 @@ func TestRenderEndToEnd(t *testing.T) {
 		URL:         "https://example.com",
 		Background:  "#2D2B55",
 		Accent:      []string{"#6C5CE7", "#8577ED"},
-		LogoFull:    "assets/logos/full.png",
-		LogoIcon:    "assets/logos/icon.png",
+		LogoFull:    "public/logos/full.png",
+		LogoIcon:    "public/logos/icon.png",
 	}
 
 	outs, err := Render(root, p, time.Date(2026, 8, 4, 0, 0, 0, 0, time.UTC))
 	if err != nil {
 		t.Fatalf("Render: %v", err)
 	}
-	want := filepath.Join(root, "assets", "testproj", "og-image.png")
+	want := filepath.Join(root, "public", "testproj", "og-image.png")
 	if len(outs) != 1 || outs[0] != want {
 		t.Errorf("outs = %v, want [%s]", outs, want)
 	}
@@ -117,23 +117,23 @@ func TestRenderMissingLogoFails(t *testing.T) {
 	if _, err := Render(root, p, time.Now()); err == nil {
 		t.Fatal("want error for missing logo")
 	}
-	if _, err := os.Stat(filepath.Join(root, "assets", "x", "og-image.png")); err == nil {
+	if _, err := os.Stat(filepath.Join(root, "public", "x", "og-image.png")); err == nil {
 		t.Fatal("no file must be written on failure")
 	}
 }
 
 func TestRenderLocalesProduceOneImagePerLanguage(t *testing.T) {
 	root := t.TempDir()
-	writeTestPNG(t, filepath.Join(root, "assets", "logos", "full.png"), 300, 100)
-	writeTestPNG(t, filepath.Join(root, "assets", "logos", "icon.png"), 100, 100)
+	writeTestPNG(t, filepath.Join(root, "public", "logos", "full.png"), 300, 100)
+	writeTestPNG(t, filepath.Join(root, "public", "logos", "icon.png"), 100, 100)
 
 	p := Project{
 		Name:       "multi",
 		URL:        "https://example.com",
 		Background: "#1D2E79",
 		Accent:     []string{"#F6B93B"},
-		LogoFull:   "assets/logos/full.png",
-		LogoIcon:   "assets/logos/icon.png",
+		LogoFull:   "public/logos/full.png",
+		LogoIcon:   "public/logos/icon.png",
 		Locales: map[string]Texts{
 			"ht": {Tagline: "Bonjou"},
 			"fr": {Tagline: "Bonjour"},
@@ -151,16 +151,16 @@ func TestRenderLocalesProduceOneImagePerLanguage(t *testing.T) {
 		t.Fatalf("outs = %v, want %d files", outs, len(wants))
 	}
 	for i, w := range wants {
-		if outs[i] != filepath.Join(root, "assets", "multi", w) {
+		if outs[i] != filepath.Join(root, "public", "multi", w) {
 			t.Errorf("outs[%d] = %s, want %s", i, outs[i], w)
 		}
 	}
 
-	def, err := os.ReadFile(filepath.Join(root, "assets", "multi", "og-image.png"))
+	def, err := os.ReadFile(filepath.Join(root, "public", "multi", "og-image.png"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	ht, err := os.ReadFile(filepath.Join(root, "assets", "multi", "og-image-ht.png"))
+	ht, err := os.ReadFile(filepath.Join(root, "public", "multi", "og-image-ht.png"))
 	if err != nil {
 		t.Fatal(err)
 	}
