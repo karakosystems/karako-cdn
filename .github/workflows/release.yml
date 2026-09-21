@@ -47,6 +47,12 @@ jobs:
             type=semver,pattern={{major}},value=${{ inputs.version }},enable=${{ !startsWith(inputs.version, '0.') }}
             type=raw,value=latest
             type=sha,format=long
+          labels: |
+            org.opencontainers.image.title=karako-cdn
+            org.opencontainers.image.documentation=https://github.com/${{ github.repository }}#readme
+            org.opencontainers.image.vendor=Karako Systems
+            org.opencontainers.image.authors=Louis Midson Lajeanty (@midsonlajeanty)
+            org.opencontainers.image.base.name=scratch
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
@@ -55,3 +61,21 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
+      - if: vars.DOCKERHUB_REPO != ''
+        name: rewrite relative links for Docker Hub
+        run: |
+          base="https://github.com/${{ github.repository }}/blob/main"
+          raw="https://raw.githubusercontent.com/${{ github.repository }}/main"
+          sed -e "s#\.github/assets/#$raw/.github/assets/#g" \
+              -e "s#(\.github/#($base/.github/#g" \
+              -e "s#(LICENSE)#($base/LICENSE)#g" \
+              -e "s#(example)#($base/example)#g" \
+              README.md > /tmp/dockerhub-readme.md
+      - if: vars.DOCKERHUB_REPO != ''
+        uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ vars.DOCKERHUB_REPO }}
+          readme-filepath: /tmp/dockerhub-readme.md
+          short-description: ${{ github.event.repository.description }}

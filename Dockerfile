@@ -18,10 +18,14 @@ RUN go -C tools/oggen build -o /app/oggen .
 FROM scratch
 
 LABEL org.opencontainers.image.title="karako-cdn" \
-      org.opencontainers.image.description="Static asset CDN: serves /assets with ETag/304, gzip, open CORS and /discover.json" \
+      org.opencontainers.image.description="Static asset CDN as a Docker image. Drop a folder in, get immutable caching, ETag/304, gzip, Range, open CORS, /discover.json, Prometheus metrics and build-time Open Graph images. Scratch image, zero dependencies." \
+      org.opencontainers.image.url="https://github.com/karakosystems/karako-cdn" \
       org.opencontainers.image.source="https://github.com/karakosystems/karako-cdn" \
+      org.opencontainers.image.documentation="https://github.com/karakosystems/karako-cdn#readme" \
+      org.opencontainers.image.vendor="Karako Systems" \
+      org.opencontainers.image.authors="Louis Midson Lajeanty (@midsonlajeanty)" \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.vendor="Karako Systems"
+      org.opencontainers.image.base.name="scratch"
 
 COPY --from=builder /app/karako-cdn /karako-cdn
 COPY --from=builder /app/healthcheck /healthcheck
