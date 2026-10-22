@@ -31,3 +31,5 @@ go.work
 *~
 
 .DS_Store
+# Rendered by oggen at image build time
+example/public/*/og-image*.png
