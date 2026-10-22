@@ -1,8 +1,9 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 	"sync/atomic"
 )
 
@@ -16,14 +17,33 @@ type metrics struct {
 }
 
 func (s *Server) serveMetrics(w http.ResponseWriter) {
+	counters := []struct {
+		class string
+		value uint64
+	}{
+		{"ok", s.metrics.ok.Load()},
+		{"not_modified", s.metrics.notModified.Load()},
+		{"redirect", s.metrics.redirects.Load()},
+		{"not_found", s.metrics.notFound.Load()},
+	}
+
+	var b strings.Builder
+	b.WriteString("# HELP karako_cdn_responses_total Responses served, by class.\n")
+	b.WriteString("# TYPE karako_cdn_responses_total counter\n")
+	for _, c := range counters {
+		b.WriteString(`karako_cdn_responses_total{class="`)
+		b.WriteString(c.class)
+		b.WriteString(`"} `)
+		b.WriteString(strconv.FormatUint(c.value, 10))
+		b.WriteByte('\n')
+	}
+	b.WriteString("# HELP karako_cdn_resources Number of resources currently served.\n")
+	b.WriteString("# TYPE karako_cdn_resources gauge\n")
+	b.WriteString("karako_cdn_resources ")
+	b.WriteString(strconv.Itoa(len(s.files)))
+	b.WriteByte('\n')
+
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
-	fmt.Fprintln(w, "# HELP karako_cdn_responses_total Responses served, by class.")
-	fmt.Fprintln(w, "# TYPE karako_cdn_responses_total counter")
-	fmt.Fprintf(w, "karako_cdn_responses_total{class=\"ok\"} %d\n", s.metrics.ok.Load())
-	fmt.Fprintf(w, "karako_cdn_responses_total{class=\"not_modified\"} %d\n", s.metrics.notModified.Load())
-	fmt.Fprintf(w, "karako_cdn_responses_total{class=\"redirect\"} %d\n", s.metrics.redirects.Load())
-	fmt.Fprintf(w, "karako_cdn_responses_total{class=\"not_found\"} %d\n", s.metrics.notFound.Load())
-	fmt.Fprintln(w, "# HELP karako_cdn_resources Number of resources currently served.")
-	fmt.Fprintln(w, "# TYPE karako_cdn_resources gauge")
-	fmt.Fprintf(w, "karako_cdn_resources %d\n", len(s.files))
+	//nosemgrep: go.lang.security.audit.xss.no-direct-write-to-responsewriter.no-direct-write-to-responsewriter
+	_, _ = w.Write([]byte(b.String()))
 }
