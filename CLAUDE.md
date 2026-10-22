@@ -30,6 +30,7 @@ File names are lowercase kebab-case with lowercase extensions. Logos follow
 ## Commands
 
 ```bash
+mise install                                            # pinned toolchain
 go test ./...                                           # unit tests
 go test ./internal/server/ -run TestETagReturns304 -v   # single test
 go -C tools/oggen test ./...                            # oggen, separate module
@@ -117,3 +118,8 @@ loads the real `example/public`.
   it calls the reusable `release.yml`, which builds once and pushes to GHCR, and
   to Docker Hub when `DOCKERHUB_REPO` is set. `release.yml` also accepts a manual
   dispatch with a version, to republish without cutting a release.
+- Tool versions live once in `mise.toml`, with per-platform checksums in
+  `mise.lock`: local dev, the lefthook jobs and every workflow (through
+  `jdx/mise-action`) take them from there. Bump with `mise upgrade --bump`, and
+  keep the `golang:1.27-alpine` tag in the Dockerfile on the same minor as the
+  `go` entry.

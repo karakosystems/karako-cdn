@@ -5,6 +5,7 @@ Thanks for taking the time. Issues and pull requests are welcome.
 ## Development
 
 ```bash
+mise install                               # pinned toolchain
 go test ./...                              # unit tests
 go -C tools/oggen test ./...               # oggen tests (separate module)
 BASE_FQDN=example.com PORT=8080 PUBLIC_DIR=example/public go run ./cmd/karako-cdn
