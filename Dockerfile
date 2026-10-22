@@ -25,7 +25,7 @@ LABEL org.opencontainers.image.title="karako-cdn" \
       org.opencontainers.image.source="https://github.com/karakosystems/karako-cdn" \
       org.opencontainers.image.documentation="https://github.com/karakosystems/karako-cdn#readme" \
       org.opencontainers.image.vendor="Karako Systems" \
-      org.opencontainers.image.authors="Louis Midson Lajeanty (@midsonlajeanty)" \
+      org.opencontainers.image.authors="Louis Midson LAJEANTY <mds@karakosystems.com>" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.base.name="scratch"
 
