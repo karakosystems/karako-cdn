@@ -7,35 +7,83 @@ on:
   schedule:
     - cron: "0 6 * * 1"
 
+permissions:
+  contents: read
+
+env:
+  SEMGREP_VERSION: 1.182.0
+  ZIZMOR_VERSION: 1.31.1
+  GITLEAKS_VERSION: 8.30.1
+  GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+  OSV_SCANNER_VERSION: 2.7.0
+  OSV_SCANNER_SHA256: 160c6253e2922e9e0a6a9771c5c4c40a4b3c6090b34a3cdd5e80c96cc2e4218b
+  GOVULNCHECK_VERSION: v1.9.0
+
 jobs:
   govulncheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: stable
           cache-dependency-path: tools/oggen/go.sum
       - name: install govulncheck
-        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+        run: go install "golang.org/x/vuln/cmd/govulncheck@$GOVULNCHECK_VERSION"
       - name: scan server module
         run: govulncheck ./...
       - name: scan oggen module
         working-directory: tools/oggen
         run: govulncheck ./...
 
-  gosec:
+  static-analysis:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: stable
-          cache-dependency-path: tools/oggen/go.sum
-      - name: install gosec
-        run: go install github.com/securego/gosec/v2/cmd/gosec@latest
-      - name: scan server module
-        run: gosec ./...
-      - name: scan oggen module
-        working-directory: tools/oggen
-        run: gosec ./...
+          persist-credentials: false
+      - name: run semgrep
+        run: pipx run "semgrep==$SEMGREP_VERSION" scan --config p/default --error --metrics=off
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: install gitleaks
+        run: |
+          curl -sSfLo gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "$GITLEAKS_SHA256  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+      - name: scan the git history for secrets
+        run: ./gitleaks git --redact --no-banner .
+
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: install osv-scanner
+        run: |
+          curl -sSfLo osv-scanner "https://github.com/google/osv-scanner/releases/download/v${OSV_SCANNER_VERSION}/osv-scanner_linux_amd64"
+          echo "$OSV_SCANNER_SHA256  osv-scanner" | sha256sum -c -
+          chmod +x osv-scanner
+      - name: scan the image for vulnerable dependencies
+        run: |
+          docker build -t cdn:scan .
+          docker save cdn:scan -o image.tar
+          ./osv-scanner scan image --archive image.tar
+
+  workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: audit workflows with zizmor
+        run: pipx run "zizmor==$ZIZMOR_VERSION" --offline .
