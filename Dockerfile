@@ -9,7 +9,9 @@ COPY tools/oggen/go.mod tools/oggen/go.sum ./tools/oggen/
 RUN go -C tools/oggen mod download
 COPY tools/oggen/ ./tools/oggen/
 
-ARG TARGETOS TARGETARCH
+ARG TARGETOS
+ARG TARGETARCH
+
 ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
 RUN go build -o karako-cdn ./cmd/karako-cdn
 RUN go build -o healthcheck ./cmd/healthcheck
