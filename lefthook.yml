@@ -9,7 +9,7 @@ pre-commit:
       run: go vet ./... && go -C tools/oggen vet ./...
     - name: actionlint
       glob: ".github/workflows/*.yml"
-      run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+      run: mise exec -- actionlint
 
 commit-msg:
   jobs:
