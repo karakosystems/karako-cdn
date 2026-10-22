@@ -23,6 +23,9 @@ vendor/
 # Go workspace file
 go.work
 
+# Machine-local mise overrides
+mise.local.toml
+
 # IDE and editor files
 .vscode/
 .idea/
