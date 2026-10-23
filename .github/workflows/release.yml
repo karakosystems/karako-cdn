@@ -50,20 +50,16 @@ jobs:
             type=raw,value=latest
             type=sha
             type=sha,format=long
-          labels: |
-            org.opencontainers.image.title=karako-cdn
-            org.opencontainers.image.description=Static asset CDN as a Docker image: drop a folder in and get caching, ETag/304, gzip, Range, open CORS, /discover.json, Prometheus metrics and build-time Open Graph images.
-            org.opencontainers.image.documentation=https://github.com/${{ github.repository }}#readme
-            org.opencontainers.image.vendor=Karako Systems
-            org.opencontainers.image.authors=Louis Midson Lajeanty (@midsonlajeanty)
-            org.opencontainers.image.base.name=scratch
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          labels: |
+            org.opencontainers.image.version=${{ inputs.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.created=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
           annotations: ${{ steps.meta.outputs.annotations }}
       - if: vars.DOCKERHUB_REPO != ''
         name: rewrite relative links for Docker Hub
