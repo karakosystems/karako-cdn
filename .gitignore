@@ -25,7 +25,6 @@ go.work
 
 # Machine-local mise overrides
 mise.local.toml
-/.mise/
 
 # IDE and editor files
 .vscode/
