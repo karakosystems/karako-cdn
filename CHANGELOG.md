@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/karakosystems/karako-cdn/compare/karako-cdn-v1.0.1...karako-cdn-v1.0.2) (2026-11-14)
+
+
+### Bug Fixes
+
+* build with go 1.27.4 to patch GO-2026-6859 ([fc86822](https://github.com/karakosystems/karako-cdn/commit/fc8682297583fc61ab89d588db0afb20f74acedc))
+
 ## [1.0.1](https://github.com/karakosystems/karako-cdn/compare/karako-cdn-v1.0.0...karako-cdn-v1.0.1) (2026-09-21)
 
 
