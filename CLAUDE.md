@@ -123,3 +123,8 @@ loads the real `example/public`.
   `jdx/mise-action`) take them from there. Bump with `mise upgrade --bump`, and
   keep the `golang:1.27-alpine` tag in the Dockerfile on the same minor as the
   `go` entry.
+- `.mise/locks/` holds the Python dependency lock for semgrep and must stay
+  committed: `mise install --locked` fails without it. Building that lock needs
+  `uv`, so the semgrep job installs `uv semgrep`.
+- A reusable workflow receives no secrets by default: `release-please.yml`
+  passes `DOCKERHUB_TOKEN` explicitly, since zizmor rejects `secrets: inherit`.
